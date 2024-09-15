@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Chat App</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat-box { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        #message-form { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="chat-box"></div>
+    <form id="message-form">
+        <input type="text" id="username" placeholder="Your name" required>
+        <input type="text" id="message" placeholder="Type a message" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const messageForm = document.getElementById('message-form');
+        const usernameInput = document.getElementById('username');
+        const messageInput = document.getElementById('message');
+
+        const socket = new WebSocket('ws://localhost:8080/ws');
+
+        socket.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const messageElement = document.createElement('p');
+            messageElement.textContent = `${message.username}: ${message.message}`;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = {
+                username: usernameInput.value,
+                message: messageInput.value
+            };
+            socket.send(JSON.stringify(message));
+            messageInput.value = '';
+        });
+    </script>
+</body>
+</html>
