@@ -3,7 +3,7 @@ module.exports = {
   content: [
     "./index.html",
     "./main.go",
-    "./style.css",
+    "./styles.css",
   ],
   theme: {
     extend: {},
